@@ -1,0 +1,884 @@
+import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  Dialog,
+  FormLabel,
+  IconButton,
+  TextField,
+  Typography,
+} from "@mui/material";
+
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import { Link } from "react-router-dom";
+const labelStyle = { mt: 1, mb: 1 };
+
+const SignUp = ({onSubmit}) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (typeof onSubmit === 'function') { 
+      onSubmit({ inputs, signup: isSignup });
+    } else {
+      console.error('onSubmit is not a function');
+    }
+  };
+  
+  
+
+  const [inputs, setInputs] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [isSignup, setIsSignup] = useState(false);
+
+  const handleChange = (e) => {
+    setInputs((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  
+
+
+
+  return (
+    <Dialog PaperProps={{ style: { borderRadius: 20 } }} open={true}>
+      <Box sx={{ ml: "auto", padding: 1 }}>
+        <IconButton component={Link} to="/">
+          <CloseRoundedIcon />
+        </IconButton>
+      </Box>
+      <Typography variant="h4" textAlign="center">
+        {isSignup ? "Signup" : "Login"}
+      </Typography>
+      <form onSubmit={handleSubmit}>
+        <Box
+          padding={6}
+          display="flex"
+          justifyContent="center"
+          flexDirection="column"
+          width={400}
+          margin="auto"
+          alignContent="center"
+        >
+          {isSignup && (
+            <>
+              <FormLabel sx={labelStyle}>Name</FormLabel>
+              <TextField
+                value={inputs.name}
+                onChange={handleChange}
+                margin="normal"
+                variant="standard"
+                type="text"
+                name="name"
+              />
+            </>
+          )}
+          <FormLabel sx={labelStyle}>Email</FormLabel>
+          <TextField
+            value={inputs.email}
+            onChange={handleChange}
+            margin="normal"
+            variant="standard"
+            type="email"
+            name="email"
+          />
+          <FormLabel sx={labelStyle}>Password</FormLabel>
+          <TextField
+            value={inputs.password}
+            onChange={handleChange}
+            margin="normal"
+            variant="standard"
+            type="password"
+            name="password"
+          />
+          <Button
+            sx={{ mt: 2, borderRadius: 10, bgcolor: "#2b2d42" }}
+            type="submit"
+            fullWidth
+            variant="contained"
+          >
+            {isSignup ? "Signup" : "Login"}
+          </Button>
+          <Button 
+            onClick={() => setIsSignup(!isSignup)}
+            sx={{ mt: 2, borderRadius: 10 }}
+            fullWidth
+          >
+            {isSignup ? "Already have an account? Login" : "Don't have an account? Signup"}
+          </Button>
+        </Box>
+      </form>
+    </Dialog>
+  );
+          }
+
+export default SignUp;
+
+
+
+{
+    "movies": [
+        {
+            "title": "Leo",
+            "description": "A mild-mannered man becomes a local hero...",
+            "actors": ["vijay", "thrisha", "sanjay", "arjun"],
+            "releaseDate": "2023/10/18",
+            "posterUrl": "https://image.tmdb.org/t/p/w500/c77VQoSoGrYUv2qHDCgCj7kUyte.jpg",
+            "featured": true
+        },
+        {
+            "title": "Japan",
+            "description": "A fictionalized version of the events surrounding notorious criminal Tiruvarur Murugan...",
+            "actors": ["Karthi", "Anu Emmanuel", "Sunil Varma"],
+            "releaseDate": "2023/11/09",
+            "posterUrl": "https://image.tmdb.org/t/p/w500/5Z8hNvpenAJJrtTFONoytov7zW9.jpg",
+            "featured": true
+        },
+        // Add other movie objects here
+    ]
+}
+
+
+[
+{
+    "title":"Leo",
+    "description":"A mild-mannered man becomes a local hero through an act of violence, but it brings forth consequences with connection to a dangerous world, one which will shake his carefully constructed life to its very core.",
+    "actors":["vijay","thrisha","sanjay","arjun"],
+    "releaseDate": "2023/10/18 ",
+     "posterUrl":"https://image.tmdb.org/t/p/w500//rzSBCrS7ZSkB8quje1Na31gRze.jpg",
+     "featured": true
+
+},
+{
+    "title":"Japan",
+    "description":"A fictionalized version of the events surrounding notorious criminal Tiruvarur Murugan, who was involved in a big jewellery shop robbery.",
+    "actors":["Karthi","Anu Emmanuel","Sunil Varma"],
+    "releaseDate": "2023/11/09 ",
+     "posterUrl":"https://image.tmdb.org/t/p/w500/5Z8hNvpenAJJrtTFONoytov7zW9.jpg",
+     "featured": true
+
+},
+{
+    "title":"Annapoorani",
+    "description":"A young girl from a strict family aspires to become the best cook in India.",
+    "actors":["Nayanthara","Jai Sampath","Sathyaraj"],
+    "releaseDate": "2023/12/01",
+     "posterUrl":"https://image.tmdb.org/t/p/w500/53eYXdeIxQdoDv3cq00nSC5iHYf.jpg",
+     "featured": true
+
+},
+{
+    "title":"Aalambana",
+    "description":"A fantasy comedy with a Genie from magic Lamp",
+    "actors":["Vaibhav Reddy","Parvatii Nair","Munishkanth"],
+    "releaseDate": "2023-12-15 ",
+     "posterUrl":"https://image.tmdb.org/t/p/w500//8Pko2qvw6g21Sw1V2dDwJZ25F7c.jpg",
+     "featured": true
+
+},
+{
+    "title":"Captain Miller",
+    "description":"In British India, during the 1930s and the 1940s, an outlaw named Miller commits robberies, sackings and attacks.",
+      
+    "actors":["Dhanush","Priyanka Arul Mohan","Shivaraj Kumar"],
+    "releaseDate": "2023-12-15 ",
+     "posterUrl":"https://image.tmdb.org/t/p/w500/oHBc4GCO9sAr1c7lxGvelKnW1zu.jpg",
+     "featured": true
+
+},
+{
+    "title":"Parking",
+    "description":"Two men become involved in an argument over a parking space outside their apartment building.",
+    "actors":["Harish Kalyan","Indhuja Ravichandran","Munishkanth"],
+    "releaseDate": "2023-12-01 ",
+     "posterUrl":"https://image.tmdb.org/t/p/w500/xcKk5IILXOzAfY69lvKhhGcIt9J.jpg",
+     "featured": true
+
+},
+{
+    "title":"Wonka",
+    "description":"Willy Wonka – chock-full of ideas and determined to change the world one delectable bite at a time ",
+    "actors":["Vaibhav Reddy","Parvatii Nair","Munishkanth"],
+    "releaseDate": "2023-12-06 ",
+     "posterUrl":"https://image.tmdb.org/t/p/w500/qhb1qOilapbapxWQn9jtRCMwXJF.jpg",
+     "featured": true
+
+}
+]
+
+
+
+
+thsi is main.jsx     import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.jsx'
+import './index.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import { Provider } from 'react-redux';
+import { store } from './store'
+
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+   <Provider store={store}>
+    <App />
+    </Provider>
+  </React.StrictMode>,
+)
+this is app.jsx   
+  // App.jsx
+import React, { useEffect } from 'react';
+import {BrowserRouter as Routes } from 'react-router-dom';
+import AppRoutes from './routes/AppRoutes';
+import { useAuth } from './components/AuthService'; 
+import Header from './components/Header';
+
+function App() {
+  const { checkLocalStorageForUser } = useAuth();
+
+  useEffect(() => {
+    checkLocalStorageForUser(); // Check local storage for logged-in user
+  }, [checkLocalStorageForUser]);
+
+  return <>
+   
+      <Routes>
+        <Header />
+        <AppRoutes />
+      </Routes>
+   
+  </>
+}
+
+export default App;
+this store folder index.jsx   import { configureStore, createSlice } from "@reduxjs/toolkit";
+
+const userSclice = createSlice({
+  name: "user",
+  initialState: { isLoggedIn: false },
+  reducers: {
+    login(state) {
+      state.isLoggedIn = true;
+    },
+    logout(state) {
+      localStorage.removeItem("userId");
+      state.isLoggedIn = false;
+    },
+  },
+});
+
+export const userActions = userSclice.actions;
+
+export const store = configureStore({
+  reducer: {
+    user: userSclice.reducer,
+    
+  },
+});   this is approutes.jsx import React from 'react'
+import {Routes,Route, BrowserRouter} from 'react-router-dom'
+import SignUp from '../components/SignUp'
+import Home from '../components/Home'
+import User from '../components/User'
+import Movies from '../Movies/Movies'
+import Profile from '../components/Profile'
+
+
+
+
+function AppRoutes() {
+  
+  
+  return <>
+  
+  <Routes>
+    <Route path ='/' element={<Home/>}/>
+    <Route path ='/movies' element={<Movies/>}/>
+    <Route path ='/user' element={<User/>}/>
+   
+   <Route path='/signup' element={<SignUp  />} />
+
+    <Route path ='/profile' element={<Profile/>}/>
+   
+  </Routes>
+
+  </>    
+}
+
+export default AppRoutes    this is movies.jsx  import { Box, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { getAllMovies } from "../api/ApiService";
+import MovieDetail from "./MovieDetail";
+
+const Movies = () => {
+  const [movies, setMovies] = useState();
+  useEffect(() => {
+    getAllMovies()
+      .then((data) => setMovies(data.movies))
+      .catch((err) => console.log(err));
+  }, []);
+  return (
+    <Box margin={"auto"} marginTop={4}>
+      <Typography
+        margin={"auto"}
+        variant="h4"
+        padding={2}
+        width="40%"
+        bgcolor={"#900C3F"}
+        color="white"
+        textAlign={"center"}
+      >
+        All Movies
+      </Typography>
+      <Box
+        width={"100%"}
+        margin="auto"
+        marginTop={5}
+        padding={6}
+        display={"flex"}
+        justifyContent="flex-start"
+        flexWrap={"wrap"}
+      >
+        {movies &&
+          movies.map((movie, index) => (
+            <MovieDetail
+              key={index}
+              id={movie._id}
+              posterUrl={movie.posterUrl}
+              releaseDate={movie.releaseDate}
+              title={movie.title}
+            />
+          ))}
+      </Box>
+    </Box>
+  );
+};
+
+export default Movies;    this is movie detail.jsx import {
+    Button,
+    Card,
+    CardActions,
+    CardContent,
+    Typography,
+  } from "@mui/material";
+  import React from "react";
+  import { Link } from "react-router-dom";
+  
+  const MovieDetail= ({ title, releaseDate, posterUrl, id }) => {
+    return (
+      <Card
+        sx={{
+          margin: 2,
+          width: 250,
+          height: 320,
+          borderRadius: 5,
+          ":hover": {
+            boxShadow: "10px 10px 20px #ccc",
+          },
+        }}
+      >
+        <img height={"50%"} width="100%" src={posterUrl} alt={title} />
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="div">
+            {title}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {new Date(releaseDate).toDateString()}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <Button
+            variant="contained"
+            fullWidth
+            LinkComponent={Link}
+            to={`/booking/${id}`}
+            sx={{
+              margin: "auto",
+              bgcolor: "#2b2d42",
+              ":hover": {
+                bgcolor: "#121217",
+              },
+            }}
+            size="small"
+          >
+            Book
+          </Button>
+        </CardActions>
+      </Card>
+    );
+  };
+  
+  export default MovieDetail;
+  
+this is signup.jsx
+import React from 'react';
+import { Button, Container, Grid, TextField, Typography, Avatar, Box, createTheme, ThemeProvider } from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { styled } from '@mui/system';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+const defaultTheme = createTheme();
+
+const StyledBox = styled(Box)(({ theme }) => ({
+  background: 'rgba(255, 255, 255, 0.6)',
+  backdropFilter: 'blur(10px)',
+  borderRadius: 20,
+  border: '2px solid rgba(255, 255, 255, 0.3)',
+  boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+  padding: theme.spacing(4),
+}));
+
+export default function SignUp() {
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const [isSignup, setIsSignup] = React.useState(true);
+  const navigate = useNavigate();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+  
+    const userData = {
+      name: isSignup ? formData.get('Name') || '' : '',
+      email: formData.get('email'),
+      password: formData.get('password'),
+    };
+  
+    try {
+      const endpoint = isSignup ? '/user/signup' : '/user/login';
+      const response = await axios.post(`http://localhost:8000${endpoint}`, userData);
+      if (response.status === 200 || response.status === 201) {
+        console.log(isSignup ? 'Signup successful!' : 'Login successful!');
+        navigate('/'); // Redirect to the main page after successful login/signup
+      } else {
+        console.log(isSignup ? 'Signup failed!' : 'Login failed!');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Redirect conditionally after successful authentication
+
+
+  
+  return (
+    <ThemeProvider theme={defaultTheme}>
+     
+      <Container component="main" maxWidth="xs" sx={{ mt: 8 }}>
+        <StyledBox
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            position: 'relative',
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            {isSignup ? 'Sign up' : 'Sign In'}
+          </Typography>
+          <Box
+            component="form"
+            noValidate
+            onSubmit={handleSubmit}
+            sx={{
+              width: '100%',
+              mt: 3,
+            }}
+          >
+            {isSignup && (
+              <Grid item xs={12} sm={12}>
+                <TextField
+                  autoComplete="given-name"
+                  name="Name"
+                  required
+                  fullWidth
+                  id="Name"
+                  label="Name"
+                  autoFocus
+                  sx={{ mb: 3 }}
+                />
+              </Grid>
+            )}
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                sx={{ mb: 3 }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="new-password"
+                sx={{ mb: 3 }}
+              />
+            </Grid>
+            <Button 
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{
+            mt: 3,
+            mb: 2,
+          }}
+        >
+          {isSignup ? 'Sign Up' : 'Login'}
+        </Button>
+        <Grid container justifyContent="flex-end">
+          <Grid item>
+            <Typography variant="body2" onClick={() => setIsSignup(!isSignup)} sx={{ cursor: 'pointer' }}>
+              {isSignup ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
+            </Typography>
+              </Grid>
+            </Grid>
+          </Box>
+        </StyledBox>
+      </Container>
+    </ThemeProvider>
+  );
+}
+
+this is profile.jsx    
+
+import { Box } from "@mui/system";
+import React, { useEffect, useState } from "react";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import { DeleteForeverOutlined } from "@mui/icons-material/";
+
+import {
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+} from "@mui/material";
+import { deleteBooking, getUserBookings } from "../api/ApiService";
+import { useNavigate } from "react-router-dom";
+const User = () => {
+  const navigate = useNavigate();
+  const [bookings, setBookings] = useState([]);
+  const onResReceived = (res) => {
+    setBookings(res.bookings);
+  };
+  useEffect(() => {
+    getUserBookings()
+      .then(onResReceived)
+      .catch((err) => console.log(err));
+  }, []);
+  console.log(bookings);
+  const handleDelete = (id) => {
+    deleteBooking(id)
+      .then(() => navigate("/"))
+      .catch((err) => console.log(err));
+  };
+  return (
+    <Box width="100%" display={"flex"}>
+      <Box
+        display="flex"
+        flexDirection={"column"}
+        justifyContent="center"
+        alignItems={"center"}
+        width="30%"
+      >
+        <PersonRoundedIcon sx={{ fontSize: "20rem" }} />
+        <Typography
+          padding={1}
+          width="100px"
+          textAlign={"center"}
+          border="1px solid #ccc"
+          borderRadius={10}
+        >
+          Name: {bookings.length > 1 && bookings[0].user.name}
+        </Typography>
+      </Box>
+      <Box width="70%" display="flex" flexDirection={"column"}>
+        <Typography
+          variant="h3"
+          fontFamily={"verdana"}
+          textAlign="center"
+          padding={2}
+        >
+          Bookings
+        </Typography>
+
+        <Box margin="auto" display="flex" flexDirection={"column"} width="80%">
+          <List>
+            {bookings &&
+              bookings.map((booking, index) => (
+                <ListItem
+                  sx={{
+                    bgcolor: "#00d386",
+                    color: "white",
+                    textAlign: "center",
+                    margin: 1,
+                  }}
+                  key={index}
+                >
+                  <ListItemText
+                    sx={{ margin: 1, width: "100px", textAlign: "left" }}
+                  >
+                    Movie: {booking.movie.title}
+                  </ListItemText>
+                  <ListItemText
+                    sx={{ margin: 1, width: "100px", textAlign: "left" }}
+                  >
+                    Seat: {booking.seatNumber}
+                  </ListItemText>
+                  <ListItemText
+                    sx={{ margin: 1, width: "100px", textAlign: "left" }}
+                  >
+                    Date: {new Date(booking.date).toDateString()}
+                  </ListItemText>
+                  <IconButton
+                    onClick={() => handleDelete(booking._id)}
+                    color="error"
+                  >
+                    <DeleteForeverOutlined />
+                  </IconButton>
+                </ListItem>
+              ))}
+          </List>
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
+export default User; 
+
+this is home.jsx 
+import { Box, Button, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { getAllMovies } from "../api/ApiService";
+import MovieDetail from "../Movies/MovieDetail";
+import { Carousel } from 'react-bootstrap';
+const Home = () => {
+  const [movies, setMovies] = useState([]);
+  useEffect(() => {
+    getAllMovies()
+      .then((data) => setMovies(data.movies))
+      .catch((err) => console.log(err));
+  }, []);
+  return (
+    <Box width={"100%"} height="100%" margin="auto" marginTop={2}>
+      <Box margin={"auto"} width="80%" height={"40vh"} padding={2}>
+      <Carousel>
+      <Carousel.Item>
+        <img
+          className="d-block w-100"
+          src="https://image.tmdb.org/t/p/w500//8Pko2qvw6g21Sw1V2dDwJZ25F7c.jpg"
+          alt="First slide"
+        />
+      </Carousel.Item>
+      <Carousel.Item>
+        <img
+          className="d-block w-100"
+          src="https://image.tmdb.org/t/p/w500/oHBc4GCO9sAr1c7lxGvelKnW1zu.jpg"
+          alt="Second slide"
+        />
+      </Carousel.Item>
+      <Carousel.Item>
+        <img
+          className="d-block w-100"
+          src="https://image.tmdb.org/t/p/w500/hr9rjR3J0xBBKmlJ4n3gHId9ccx.jpg"
+          alt="Third slide"
+        />
+      </Carousel.Item>
+    </Carousel>
+      </Box>
+      <Box padding={5} margin="auto" >
+        <Typography variant="h4" textAlign={"center"}>
+          Latest Releases
+        </Typography>
+      </Box>
+      <Box
+        margin={"auto"}
+        display="flex"
+        width="80%"
+        justifyContent={"center"}
+        alignItems="center"
+        flexWrap="wrap"
+      >
+        {movies &&
+          movies
+            .slice(0, 4)
+            .map((movie, index) => (
+              <MovieDetail
+                id={movie.id}
+                title={movie.title}
+                posterUrl={movie.posterUrl}
+                releaseDate={movie.releaseDate}
+                key={index}
+              />
+            ))}
+      </Box>
+      <Box display="flex" padding={5} margin="auto">
+        <Button className="allmovies"
+          LinkComponent={Link}
+          to="/movies"
+          variant="outlined"
+          sx={{ margin: "auto", color: "#2b2d42" }}
+        >
+          View All Movies
+        </Button>
+      </Box>
+    </Box>
+  );
+};
+
+export default Home;    
+this is header.jsx
+ import React, { useEffect, useState } from "react";
+import { AppBar, Toolbar, Autocomplete, TextField } from "@mui/material";
+import { useSelector } from "react-redux";
+import { Box } from "@mui/system";
+import { Tabs, Tab } from "@mui/material";
+import { getAllMovies } from "../api/ApiService";
+import { Link } from "react-router-dom";
+import MovieCreationIcon from '@mui/icons-material/MovieCreation';
+import { userActions } from '../store';
+import { useDispatch } from 'react-redux';
+
+function Header() {
+  const isUserLoggedIn = useSelector((state) => state.user.isLoggedIn);
+  const [value, setValue] = useState(0);
+  const [movies, setMovies] = useState([]);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    getAllMovies()
+      .then((data) => setMovies(data.movies))
+      .catch((err) => console.log(err));
+  }, []);
+
+  const handleLogout = () => {
+    // Dispatch a logout action when the user clicks on logout
+    dispatch(userActions.logout());
+  };
+
+  return (
+    <>
+      <AppBar position='sticky'>
+        <Toolbar className="navbar">
+          <Box position="relative" display="inline-block">
+            <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+              <span className="movie-icon-background"></span>
+              <MovieCreationIcon className="movie-icon" style={{ fontSize: 60 }} />
+            </Link>
+          </Box>
+          <Box className="search">
+            <Autocomplete
+              freeSolo
+              options={movies && movies.map((option) => option.title)}
+              renderInput={(params) => <TextField {...params} placeholder="search" />}
+            />
+          </Box>
+          <Box display={'flex'}>
+            <Tabs className="btns" textColor="inherit" indicatorColor="primary" value={value} onChange={(e, value) => setValue(value)}>
+              <Tab LinkComponent={Link} to='/movies' label="Movies" />
+              {isUserLoggedIn ? (
+                <>
+                  <Tab LinkComponent={Link} to='/profile' label='Profile' />
+                  <Tab label="Logout" onClick={handleLogout} />
+                </>
+              ) : (
+                <Tab LinkComponent={Link} to='/signup' label='Signup' />
+              )}
+            </Tabs>
+          </Box>
+        </Toolbar>
+      </AppBar>
+    </>
+  );
+}
+
+export default Header;
+
+this is authservice.jsx      
+import { useDispatch } from 'react-redux';
+import { userActions } from '../store';
+
+export const useAuth = () => {
+  const dispatch = useDispatch();
+
+  const checkLocalStorageForUser = () => {
+    // Check localStorage for user login data
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      // If user data exists, dispatch login action
+      dispatch(userActions.login());
+    }
+  };
+
+  return { checkLocalStorageForUser };
+};
+this auth.jsx import React from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { sendUserAuthRequest } from "../../api-helpers/api-helpers";
+import { userActions } from "../../store";
+import SignUp from "./SignUp";
+
+const Auth = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const onResReceived = (data) => {
+    console.log(data);
+    dispatch(userActions.login());
+    localStorage.setItem("userId", data.id);
+    navigate("/");
+  };
+  const handleFormSubmit= (data) => {
+    console.log(data);
+    sendUserAuthRequest(data.inputs, data.signup)
+      .then(onResReceived)
+      .catch((err) => console.log(err));
+  };
+
+  return <>
+   <SignUp onSubmit={handleFormSubmit} />
+  </>
+}
+export default  Auth;   this is api service    import React from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { sendUserAuthRequest } from "../../api-helpers/api-helpers";
+import { userActions } from "../../store";
+import SignUp from "./SignUp";
+
+const Auth = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const onResReceived = (data) => {
+    console.log(data);
+    dispatch(userActions.login());
+    localStorage.setItem("userId", data.id);
+    navigate("/");
+  };
+  const handleFormSubmit= (data) => {
+    console.log(data);
+    sendUserAuthRequest(data.inputs, data.signup)
+      .then(onResReceived)
+      .catch((err) => console.log(err));
+  };
+
+  return <>
+   <SignUp onSubmit={handleFormSubmit} />
+  </>
+}
+export default  Auth;   check all this and solve onsubmit is not function error
