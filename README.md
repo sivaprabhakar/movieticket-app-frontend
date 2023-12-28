@@ -1,4 +1,4 @@
-# React + Vite
+this fronend tech is used react js ,MUI,redux for booking ticket for movie # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
