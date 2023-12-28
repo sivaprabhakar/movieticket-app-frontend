@@ -6,7 +6,7 @@ import { Button, FormLabel, TextField, Typography } from "@mui/material";
 const Booking = () => {
     const [movie, setMovie] = useState(null);
     const [inputs, setInputs] = useState({ seatNumber: "", date: "" });
-    const id = useParams().id;
+    const {id} = useParams();
     console.log("ID from URL:", id);
   
     useEffect(() => {
@@ -26,6 +26,7 @@ const Booking = () => {
     const handleSubmit = (e) => {
       e.preventDefault();
       console.log(inputs);
+
       newBooking({ ...inputs, movie: movie._id })
         .then((res) => console.log(res))
         .catch((err) => console.log(err));

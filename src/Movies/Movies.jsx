@@ -4,12 +4,12 @@ import { getAllMovies } from "../api/ApiService";
 import MovieDetail from "./MovieDetail";
 
 const Movies = () => {
-  const [movies, setMovies] = useState([]);
+  const [movies, setMovies] = useState();
 
   useEffect(() => {
     getAllMovies()
       .then((data) => {
-        console.log("API Response:", data);
+        console.log("Fetched movies:", data.movies); 
         setMovies(data.movies);
       })
       .catch((err) => console.log(err));
@@ -36,10 +36,10 @@ const Movies = () => {
         justifyContent="flex-start"
         flexWrap={"wrap"}
       >
-       {movies && movies.map((movie, index) => (
+       {movies.map((movie) => (
   <MovieDetail
-    key={index}
-    id={movie._id} // Ensure movie._id is correctly accessed based on your data structure
+    key={movie._id}
+    id={movie._id}
     posterUrl={movie.posterUrl}
     releaseDate={movie.releaseDate}
     title={movie.title}
