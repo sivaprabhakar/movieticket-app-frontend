@@ -4,7 +4,7 @@ import SignUp from '../components/SignUp'
 import Home from '../components/Home'
 import User from '../components/User'
 import Movies from '../Movies/Movies'
-import Profile from '../components/Profile'
+import UserProfile from '../components/UserProfile'
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { userActions } from '../store'
@@ -25,7 +25,7 @@ function AppRoutes() {
       <Route path="/movies" element={<Movies />} />
       <Route path="/user" element={<User />} />
       <Route path="/signup" element={<SignUp />} />
-      <Route path="/profile"   element={<Profile />} />
+      <Route path="/userprofile"   element={<UserProfile />} />
       <Route path="/booking/:id"   element={<Booking />} />
       
         

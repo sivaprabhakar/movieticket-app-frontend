@@ -12,8 +12,10 @@ const Auth = () => {
   const handleFormSubmit = async (data) => {
     try {
       const response = await sendUserAuthRequest(data, data.signup);
-      if (response && response.token) {
+      if (response && response.token && response.id) {
         localStorage.setItem("token", response.token);
+        localStorage.setItem("userId", response.id);
+        
         dispatch(userActions.login());
         navigate("/");
       } else {

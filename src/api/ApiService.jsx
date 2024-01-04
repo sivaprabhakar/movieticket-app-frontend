@@ -44,14 +44,13 @@ export const sendUserAuthRequest = async (data, signup) => {
   }
 };
 
-
 export const newBooking = async (data) => {
   try {
     const res = await axios.post("/booking", {
       movie: data.movie,
-      seatNumber: data.seatNumber,
+      seatNumbers: data.seatNumbers,
       date: data.date,
-      user: localStorage.getItem("token"),
+      user: localStorage.getItem("userId"),
     });
 
     if (res.status === 201) {
@@ -67,8 +66,11 @@ export const newBooking = async (data) => {
   }
 };
 
+
+
+
 export const getUserBookings = async () => {
-  const id = localStorage.getItem("token");
+  const id = localStorage.getItem("userId");
 
   try {
     const res = await axios.get(`/user/booking/${id}`);
@@ -105,7 +107,7 @@ export const deleteBooking = async (id) => {
 };
 
 export const getUserDetails = async () => {
-  const id = localStorage.getItem("token");
+  const id = localStorage.getItem("userId");
   const res = await axios.get(`/user/${id}`).catch((err) => console.log(err));
   if (res.status !== 200) {
     return console.log("Unexpected Error");

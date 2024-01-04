@@ -23,6 +23,7 @@ function Header() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userId');
     delete axios.defaults.headers.common['Authorization'];
     dispatch(userActions.logout()); 
   };
@@ -32,7 +33,7 @@ function Header() {
       <Tab key="signup" LinkComponent={Link} to="/signup" label="Signup" />
     ),
     isUserLoggedIn && (
-      <Tab key="profile" LinkComponent={Link} to="/profile" label="Profile" />
+      <Tab key="profile" LinkComponent={Link} to="/userprofile" label="Profile" />
     ),
     isUserLoggedIn && (
       <Tab

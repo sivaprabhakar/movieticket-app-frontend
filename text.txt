@@ -1,1358 +1,167 @@
-main.jsx
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-import 'bootstrap/dist/css/bootstrap.min.css';
-
-import { Provider } from 'react-redux';
-import { store } from './store'
-
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-   <Provider store={store}>
-    <App />
-    </Provider>
-  </React.StrictMode>,
-)
-
-
-app.jsx
-
-  // App.jsx
-import React, { useEffect } from 'react';
-import {BrowserRouter as Routes } from 'react-router-dom';
-import AppRoutes from './routes/AppRoutes';
-import { useAuth } from './components/AuthService'; 
-import Header from './components/Header';
-import { setAuthHeader } from './components/AuthService';
 
 
 
-function App() {
-  const { checkLocalStorageForUser } = useAuth();
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { getMovieDetails, newBooking } from '../api/ApiService';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import { FormLabel, Grid, Paper } from '@mui/material';
+import { EventSeat, EventAvailable } from '@mui/icons-material';
+
+
+
+const Booking = () => {
+  const [movie, setMovie] = useState(null);
+  const [inputs, setInputs] = useState({ date: '' });
+  const [selectedSeats, setSelectedSeats] = useState([]);
+  const { id } = useParams();
+
+ 
   useEffect(() => {
-    checkLocalStorageForUser(); // Check local storage for logged-in user
-  }, [checkLocalStorageForUser]);
-  useEffect(() => {
-    setAuthHeader(); // Call setAuthHeader when the app starts
-    // Other initialization logic
-  }, []);
-  return <>
-   
-      <Routes>
-        <Header />
-        <AppRoutes />
-      </Routes>
-   
-  </>
-}
-
-export default App;
-
-
-index.js in store folder
-import { configureStore, createSlice } from "@reduxjs/toolkit";
-
-const userSclice = createSlice({
-  name: "user",
-  initialState: { isLoggedIn: false },
-  reducers: {
-    login(state) {
-      state.isLoggedIn = true;
-    },
-    logout(state) {
-      localStorage.removeItem("userId");
-      state.isLoggedIn = false;
-    },
-  },
-});
-
-export const userActions = userSclice.actions;
-
-export const store = configureStore({
-  reducer: {
-    user: userSclice.reducer,
-    
-  },
-});
-
-approutes.jsx in routes folder
-import React from 'react'
-import {Routes,Route, BrowserRouter} from 'react-router-dom'
-import SignUp from '../components/SignUp'
-import Home from '../components/Home'
-import User from '../components/User'
-import Movies from '../Movies/Movies'
-import Profile from '../components/Profile'
-
-
-
-
-function AppRoutes() {
-  
-  
-  return <>
-  
-  <Routes>
-    <Route path ='/' element={<Home/>}/>
-    <Route path ='/movies' element={<Movies/>}/>
-    <Route path ='/user' element={<User/>}/>
-   
-   <Route path='/signup' element={<SignUp  />} />
-
-    <Route path ='/profile' element={<Profile/>}/>
-   
-  </Routes>
-
-  </>
-}
-
-export default AppRoutes
- movies.jsx in movies folder
- import { Box, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { getAllMovies } from "../api/ApiService";
-import MovieDetail from "./MovieDetail";
-
-const Movies = () => {
-  const [movies, setMovies] = useState();
-  useEffect(() => {
-    getAllMovies()
-      .then((data) => setMovies(data.movies))
+    getMovieDetails(id)
+      .then((res) => {
+        setMovie(res.movie);
+      })
       .catch((err) => console.log(err));
-  }, []);
-  return (
-    <Box margin={"auto"} marginTop={4}>
-      <Typography
-        margin={"auto"}
-        variant="h4"
-        padding={2}
-        width="40%"
-        bgcolor={"#900C3F"}
-        color="white"
-        textAlign={"center"}
-      >
-        All Movies
-      </Typography>
-      <Box
-        width={"100%"}
-        margin="auto"
-        marginTop={5}
-        padding={6}
-        display={"flex"}
-        justifyContent="flex-start"
-        flexWrap={"wrap"}
-      >
-        {movies &&
-          movies.map((movie, index) => (
-            <MovieDetail
-              key={index}
-              id={movie._id}
-              posterUrl={movie.posterUrl}
-              releaseDate={movie.releaseDate}
-              title={movie.title}
-            />
-          ))}
-      </Box>
-    </Box>
-  );
-};
+  }, [id]);
 
-export default Movies;
-
-MovieDetail.jsx from movies folder
-import {
-    Button,
-    Card,
-    CardActions,
-    CardContent,
-    Typography,
-  } from "@mui/material";
-  import React from "react";
-  import { Link } from "react-router-dom";
-  
-  const MovieDetail= ({ title, releaseDate, posterUrl, id }) => {
-    return (
-      <Card
-        sx={{
-          margin: 2,
-          width: 250,
-          height: 320,
-          borderRadius: 5,
-          ":hover": {
-            boxShadow: "10px 10px 20px #ccc",
-          },
-        }}
-      >
-        <img height={"50%"} width="100%" src={posterUrl} alt={title} />
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="div">
-            {title}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {new Date(releaseDate).toDateString()}
-          </Typography>
-        </CardContent>
-        <CardActions>
-          <Button
-            variant="contained"
-            fullWidth
-            LinkComponent={Link}
-            to={`/booking/${id}`}
-            sx={{
-              margin: "auto",
-              bgcolor: "#2b2d42",
-              ":hover": {
-                bgcolor: "#121217",
-              },
-            }}
-            size="small"
-          >
-            Book
-          </Button>
-        </CardActions>
-      </Card>
-    );
-  };
-  
-  export default MovieDetail;
-
-  signup.jsx from components
-  import React from 'react';
-
-import { Button, Container, Grid, TextField, Typography, Avatar, Box, createTheme, ThemeProvider } from '@mui/material';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { styled } from '@mui/system';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-const defaultTheme = createTheme();
-
-const StyledBox = styled(Box)(({ theme }) => ({
-  background: 'rgba(255, 255, 255, 0.6)',
-  backdropFilter: 'blur(10px)',
-  borderRadius: 20,
-  border: '2px solid rgba(255, 255, 255, 0.3)',
-  boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-  padding: theme.spacing(4),
-}));
-
-export default function SignUp() {
-  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
-  const [isSignup, setIsSignup] = React.useState(true);
-  const navigate = useNavigate();
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-  
-    const userData = {
-      name: isSignup ? formData.get('Name') || '' : '',
-      email: formData.get('email'),
-      password: formData.get('password'),
-    };
-  
-    try {
-      const endpoint = isSignup ? '/user/signup' : '/user/login';
-      const response = await axios.post(`http://localhost:8000${endpoint}`, userData);
-      if (response.status === 200 || response.status === 201) {
-        console.log(isSignup ? 'Signup successful!' : 'Login successful!');
-        navigate('/'); // Redirect to the main page after successful login/signup
-      } else {
-        console.log(isSignup ? 'Signup failed!' : 'Login failed!');
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  const handleChange = (e) => {
+    setInputs((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
   };
 
-  // Redirect conditionally after successful authentication
-
-
-  
-  return (
-    <ThemeProvider theme={defaultTheme}>
-     
-      <Container component="main" maxWidth="xs" sx={{ mt: 8 }}>
-        <StyledBox
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            position: 'relative',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            {isSignup ? 'Sign up' : 'Sign In'}
-          </Typography>
-          <Box
-            component="form"
-            noValidate
-            onSubmit={handleSubmit}
-            sx={{
-              width: '100%',
-              mt: 3,
-            }}
-          >
-            {isSignup && (
-              <Grid item xs={12} sm={12}>
-                <TextField
-                  autoComplete="given-name"
-                  name="Name"
-                  required
-                  fullWidth
-                  id="Name"
-                  label="Name"
-                  autoFocus
-                  sx={{ mb: 3 }}
-                />
-              </Grid>
-            )}
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                sx={{ mb: 3 }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="new-password"
-                sx={{ mb: 3 }}
-              />
-            </Grid>
-            <Button 
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{
-            mt: 3,
-            mb: 2,
-          }}
-        >
-          {isSignup ? 'Sign Up' : 'Login'}
-        </Button>
-        <Grid container justifyContent="flex-end">
-          <Grid item>
-            <Typography variant="body2" onClick={() => setIsSignup(!isSignup)} sx={{ cursor: 'pointer' }}>
-              {isSignup ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
-            </Typography>
-              </Grid>
-            </Grid>
-          </Box>
-        </StyledBox>
-      </Container>
-    </ThemeProvider>
-  );
-}
-
-
-profile.jsximport { Box } from "@mui/system";
-import React, { useEffect, useState } from "react";
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
-import { DeleteForeverOutlined } from "@mui/icons-material/";
-
-import {
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Typography,
-} from "@mui/material";
-import { deleteBooking, getUserBookings } from "../api/ApiService";
-import { useNavigate } from "react-router-dom";
-const User = () => {
-  const navigate = useNavigate();
-  const [bookings, setBookings] = useState([]);
-  const onResReceived = (res) => {
-    setBookings(res.bookings);
-  };
-  useEffect(() => {
-    getUserBookings()
-      .then(onResReceived)
-      .catch((err) => console.log(err));
-  }, []);
-  console.log(bookings);
-  const handleDelete = (id) => {
-    deleteBooking(id)
-      .then(() => navigate("/"))
-      .catch((err) => console.log(err));
-  };
-  return (
-    <Box width="100%" display={"flex"}>
-      <Box
-        display="flex"
-        flexDirection={"column"}
-        justifyContent="center"
-        alignItems={"center"}
-        width="30%"
-      >
-        <PersonRoundedIcon sx={{ fontSize: "20rem" }} />
-        <Typography
-          padding={1}
-          width="100px"
-          textAlign={"center"}
-          border="1px solid #ccc"
-          borderRadius={10}
-        >
-          Name: {bookings.length > 1 && bookings[0].user.name}
-        </Typography>
-      </Box>
-      <Box width="70%" display="flex" flexDirection={"column"}>
-        <Typography
-          variant="h3"
-          fontFamily={"verdana"}
-          textAlign="center"
-          padding={2}
-        >
-          Bookings
-        </Typography>
-
-        <Box margin="auto" display="flex" flexDirection={"column"} width="80%">
-          <List>
-            {bookings &&
-              bookings.map((booking, index) => (
-                <ListItem
-                  sx={{
-                    bgcolor: "#00d386",
-                    color: "white",
-                    textAlign: "center",
-                    margin: 1,
-                  }}
-                  key={index}
-                >
-                  <ListItemText
-                    sx={{ margin: 1, width: "100px", textAlign: "left" }}
-                  >
-                    Movie: {booking.movie.title}
-                  </ListItemText>
-                  <ListItemText
-                    sx={{ margin: 1, width: "100px", textAlign: "left" }}
-                  >
-                    Seat: {booking.seatNumber}
-                  </ListItemText>
-                  <ListItemText
-                    sx={{ margin: 1, width: "100px", textAlign: "left" }}
-                  >
-                    Date: {new Date(booking.date).toDateString()}
-                  </ListItemText>
-                  <IconButton
-                    onClick={() => handleDelete(booking._id)}
-                    color="error"
-                  >
-                    <DeleteForeverOutlined />
-                  </IconButton>
-                </ListItem>
-              ))}
-          </List>
-        </Box>
-      </Box>
-    </Box>
-  );
-};
-
-export default User;
-home.jsx
-import { Box, Button, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { getAllMovies } from "../api/ApiService";
-import MovieDetail from "../Movies/MovieDetail";
-import { Carousel } from 'react-bootstrap';
-const Home = () => {
-  const [movies, setMovies] = useState([]);
-  useEffect(() => {
-    getAllMovies()
-      .then((data) => setMovies(data.movies))
-      .catch((err) => console.log(err));
-  }, []);
-  return (
-    <Box width={"100%"} height="100%" margin="auto" marginTop={2}>
-      <Box margin={"auto"} width="80%" height={"40vh"} padding={2}>
-      <Carousel>
-      <Carousel.Item>
-        <img
-          className="d-block w-100"
-          src="https://image.tmdb.org/t/p/w500//8Pko2qvw6g21Sw1V2dDwJZ25F7c.jpg"
-          alt="First slide"
-        />
-      </Carousel.Item>
-      <Carousel.Item>
-        <img
-          className="d-block w-100"
-          src="https://image.tmdb.org/t/p/w500/oHBc4GCO9sAr1c7lxGvelKnW1zu.jpg"
-          alt="Second slide"
-        />
-      </Carousel.Item>
-      <Carousel.Item>
-        <img
-          className="d-block w-100"
-          src="https://image.tmdb.org/t/p/w500/hr9rjR3J0xBBKmlJ4n3gHId9ccx.jpg"
-          alt="Third slide"
-        />
-      </Carousel.Item>
-    </Carousel>
-      </Box>
-      <Box padding={5} margin="auto" >
-        <Typography variant="h4" textAlign={"center"}>
-          Latest Releases
-        </Typography>
-      </Box>
-      <Box
-        margin={"auto"}
-        display="flex"
-        width="80%"
-        justifyContent={"center"}
-        alignItems="center"
-        flexWrap="wrap"
-      >
-        {movies &&
-          movies
-            .slice(0, 4)
-            .map((movie, index) => (
-              <MovieDetail
-                id={movie.id}
-                title={movie.title}
-                posterUrl={movie.posterUrl}
-                releaseDate={movie.releaseDate}
-                key={index}
-              />
-            ))}
-      </Box>
-      <Box display="flex" padding={5} margin="auto">
-        <Button className="allmovies"
-          LinkComponent={Link}
-          to="/movies"
-          variant="outlined"
-          sx={{ margin: "auto", color: "#2b2d42" }}
-        >
-          View All Movies
-        </Button>
-      </Box>
-    </Box>
-  );
-};
-
-export default Home;
-
-header.jsx
-import React, { useEffect, useState } from "react";
-import { AppBar, Toolbar, Autocomplete, TextField } from "@mui/material";
-import { useSelector } from "react-redux";
-import { Box } from "@mui/system";
-import { Tabs, Tab } from "@mui/material";
-import { getAllMovies } from "../api/ApiService";
-import { Link } from "react-router-dom";
-import MovieCreationIcon from '@mui/icons-material/MovieCreation';
-import { userActions } from '../store';
-import { useDispatch } from 'react-redux';
-
-function Header() {
-  const isUserLoggedIn = useSelector((state) => state.user.isLoggedIn);
-  const [value, setValue] = useState(0);
-  const [movies, setMovies] = useState([]);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    getAllMovies()
-      .then((data) => setMovies(data.movies))
-      .catch((err) => console.log(err));
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    delete axios.defaults.headers.common['Authorization'];
-    dispatch(userActions.logout()); 
-  };
-
-  return (
-    <>
-      <AppBar position='sticky'>
-        <Toolbar className="navbar">
-          <Box position="relative" display="inline-block">
-            <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-              <span className="movie-icon-background"></span>
-              <MovieCreationIcon className="movie-icon" style={{ fontSize: 60 }} />
-            </Link>
-          </Box>
-          <Box className="search">
-            <Autocomplete
-              freeSolo
-              options={movies && movies.map((option) => option.title)}
-              renderInput={(params) => <TextField {...params} placeholder="search" />}
-            />
-          </Box>
-          <Box display={'flex'}>
-            <Tabs className="btns" textColor="inherit" indicatorColor="primary" value={value} onChange={(e, value) => setValue(value)}>
-              <Tab LinkComponent={Link} to='/movies' label="Movies" />
-              {isUserLoggedIn ? (
-                <>
-                  <Tab LinkComponent={Link} to='/profile' label='Profile' />
-                  <Tab label="Logout" onClick={handleLogout} />
-                </>
-              ) : (
-                <Tab LinkComponent={Link} to='/signup' label='Signup' />
-              )}
-            </Tabs>
-          </Box>
-        </Toolbar>
-      </AppBar>
-    </>
-  );
-}
-
-export default Header;
-
-
-authservice.jsx
-import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { userActions } from '../store';
-
-export const useAuth = () => {
-  const dispatch = useDispatch();
-
-  const checkLocalStorageForUser = () => {
-    // Check localStorage for user login data
-    const userId = localStorage.getItem('userId');
-    if (userId) {
-      // If user data exists, dispatch login action
-      dispatch(userActions.login());
-    }
-  };
-
-  return { checkLocalStorageForUser };
-};
-export const setAuthHeader = () => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  const handleSeatSelection = (seatNumbers) => {
+    if (selectedSeats.includes(seatNumbers)) {
+      setSelectedSeats(selectedSeats.filter((seat) => seat !== seatNumbers));
     } else {
-      delete axios.defaults.headers.common['Authorization'];
+      setSelectedSeats([...selectedSeats, seatNumbers]);
     }
   };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
   
-  // Call this function whenever the app starts or after login
- 
-auth.jsx
-import React from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { sendUserAuthRequest } from "../../api-helpers/api-helpers";
-import { userActions } from "../../store";
-import SignUp from "./SignUp";
-
-const Auth = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const onResReceived = (data) => {
-    localStorage.setItem("token", data.token);
-    dispatch(userActions.login());
-    localStorage.setItem("userId", data.id);
-    navigate("/");
-  };
-  const handleFormSubmit= (data) => {
-    console.log(data);
-    sendUserAuthRequest(data.inputs, data.signup)
-      .then(onResReceived)
-      .catch((err) => console.log(err));
-  };
-
-  return <>
-     <SignUp  onSubmit={handleFormSubmit} />
-  </>
-}
-export default  Auth;
-
-ApiService.jsx from api folder
-import axios from "axios"
-
-
-export const getAllMovies = async()=>{
-   const res =await axios.get("http://localhost:8000/movie")
-   .catch((err)=>console.log(err))
-   if(res.status !== 200){
-    return console.log("no data")
-
-   }
-   const data = await res.data;
-   return data;
-}
-
-export const sendUserAuthRequest = async (data, signup) => {
-   const res = await axios
-     .post(`http://localhost:8000/user/${signup ? "signup" : "login"}`, {
-       name: signup ? data.name : "",
-       email: data.email,
-       password: data.password,
-     })
-     .catch((err) => console.log(err));
- 
-   if (res.status !== 200 && res.status !== 201) {
-     console.log("Unexpected Error Occurred");
-   }
- 
-   const resData = await res.data;
-   return resData;
- };
- export const getMovieDetails = async (id) => {
-  const res = await axios.get(`http://localhost:8000/movie/${id}`).catch((err) => console.log(err));
-  if (res.status !== 200) {
-    return console.log("Unexpected Error");
-  }
-  const resData = await res.data;
-  return resData;
-};
-
-export const newBooking = async (data) => {
-  const res = await axios
-    .post("http://localhost:8000/booking", {
-      movie: data.movie,
-      seatNumber: data.seatNumber,
-      date: data.date,
-      user: localStorage.getItem("userId"),
+    if (!inputs.date) {
+      alert('Please select a date.');
+      return;
+    }
+  
+    if (selectedSeats.length === 0) {
+      alert('Please select at least one seat.');
+      return;
+    }
+  
+    const userId = localStorage.getItem('userId'); // Get userId from localStorage
+  
+    if (!userId) {
+      console.error('User ID not available');
+      return;
+    }
+  
+    newBooking({
+      userId: userId, // Pass the userId
+      movie: movie._id,
+      seatNumbers: selectedSeats,
+      date: inputs.date,
     })
-    .catch((err) => console.log(err));
-
-  if (res.status !== 201) {
-    return console.log("Unexpected Error");
-  }
-  const resData = await res.data;
-  return resData;
-};
-
-export const getUserBookings = async () => {
-  const id = localStorage.getItem("userId");
-  const res = await axios
-    .get(`http://localhost:8000/user/bookings/${id}`)
-    .catch((err) => console.log(err));
-
-  if (res.status !== 200) {
-    return console.log("Unexpected Error");
-  }
-  const resData = await res.data;
-  return resData;
-};
-
-export const deleteBooking = async (id) => {
-  const res = await axios
-    .delete(`http://localhost:8000/booking/${id}`)
-    .catch((err) => console.log(err));
-
-  if (res.status !== 200) {
-    return console.log("Unepxected Error");
-  }
-
-  const resData = await res.data;
-  return resData;
-};
-
-export const getUserDetails = async () => {
-  const id = localStorage.getItem("userId");
-  const res = await axios.get(`http://localhost:8000/user/${id}`).catch((err) => console.log(err));
-  if (res.status !== 200) {
-    return console.log("Unexpected Error");
-  }
-  const resData = await res.data;
-  return resData;
-};
-
-
-
-
-now backend 
-
-main index.js
-import express from 'express';
-import dotenv from 'dotenv'
-import userRouter from './routes/user.js';
-import bookingsRouter from './routes/bookings.js';
-import movieRouter from './routes/movie.js';
-import cors from 'cors'
-
-dotenv.config();
-
-const PORT =process.env.PORT
-
-const app = express()
-
-   app.use(express.json())
-   app.use(cors())
-   app.use('/user',userRouter)
-   app.use('/booking',bookingsRouter)   
-   app.use('/movie',movieRouter)
-    
-
-app.listen(PORT,()=>console.log(`connected to port ${PORT}`))
-
-.env 
-PORT = 8000
-DB_URL = 'mongodb+srv://sivaprabhakaran94:Siva153@cluster0.zl5zlfx.mongodb.net/'
-DB_NAME = 'movie-ticket'
-
-
-user.js from routes folder
-import express from "express";
-import { verifyToken } from "../controllers/users.js";
-import {deleteUserById, getAllUsers,getBookingsOfUser,loginUser,signUp, updateUser}from "../controllers/users.js"
-
-const userRouter = express.Router();
-
-userRouter.get('/',getAllUsers)
-userRouter.post('/signup',signUp)
-userRouter.put('/:id',verifyToken,updateUser)
-userRouter.delete('/:id',deleteUserById)
-userRouter.post('/login',verifyToken,loginUser)
-userRouter.get('/booking/:id',getBookingsOfUser)
-
-export default userRouter;
-
-movieRouter.js from routes folder
-import express from "express";
-import { getAllMovies, getMovieById,addMovie, deleteMovieById,addMultipleMovies } from "../controllers/movie.js";
-
-const movieRouter = express.Router();
-
-// GET all movies
-movieRouter.get("/", getAllMovies);
-
-// GET movie by ID
-movieRouter.get("/:id", getMovieById);
-
-movieRouter.delete('/:id',deleteMovieById)
-movieRouter.post('/addmovie', addMovie);
-
-movieRouter.post('/multiplemovies', addMultipleMovies);
-export default movieRouter;
-
-import express from "express";
-import userRouter from "./user.js";
-const router = express.Router();
-router.get('/',(req,res)=>{
-    res.status(200).send(`
-    <h1 style="text-align:center">Welcome to Backend of Blog App</h1>`)
-})
-router.use('/user',userRouter)
-
-
-
-export default router;
-
-bookings.js from routes folder
-import express from 'express'
-import {deleteBooking,getBookingById,newBooking,} from "../controllers/bookings.js";
-  
-  const bookingsRouter = express.Router();
-  
-  bookingsRouter.get("/:id", getBookingById);
-  bookingsRouter.post("/", newBooking);
-  bookingsRouter.delete("/:id", deleteBooking);
-export default bookingsRouter;
-
-now models folder 
-users.js
-
-import mongoose from "./index.js";
-
-
-const validateEmail = (e)=>{
-    var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    return emailPattern.test(e); 
-}
-
-const userSchema = new mongoose.Schema({
-    name:{type:String,
-        required:[true,"Name is required"]},
-    
-    email:{type:String,
-        required:[true,"Email is required"],
-        validate:validateEmail},
-    password:{type:String,
-        required:[true,"Password is required"]},
-
-    bookings : [{ type: mongoose.Types.ObjectId, 
-        ref: "Booking" }],
-},
-   
-{
-    collection:'users',
-    versionKey:false
-})
-
-const userModel = mongoose.model('users',userSchema)
-export default userModel
-
-movie.jsimport mongoose from "./index.js"
-
-const movieSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  actors: [{ type: String, required: true }],
-  releaseDate: {
-    type: Date,
-    required: true,
-  },
-  posterUrl: {
-    type: String,
-    required: true,
-  },
-  featured: {
-    type: Boolean,
-  },
-  bookings: [{ 
-    type: mongoose.Types.ObjectId,
-     ref: "Booking" }],
-
- 
-});
- 
-
-export default mongoose.model("Movie", movieSchema);
-
-
-index.jsimport mongoose from "mongoose";
-import dotenv from 'dotenv';
-dotenv.config()
-
-try {
-    mongoose.connect(`${process.env.DB_URL}${process.env.DB_NAME}`)
-    
-} catch (error) {
-    console.log(error)
-}
-
-
-export default mongoose
-
-bookings.js
-import mongoose from "./index.js";
-
-const bookingSchema = new mongoose.Schema({
-    movie: {
-      type: mongoose.Types.ObjectId,
-      ref: "Movie",
-      required: true,
-    },
-    date: {
-      type: Date,
-      required: true,
-    },
-    seatNumber: {
-      type: Number,
-      required: true,
-    },
-    user: {
-      type: mongoose.Types.ObjectId,
-      ref: "users",
-      required: true,
-    }
-    },{
-        collection:'bookings',
-        versionKey:false
-    });
-  
-  export default  mongoose.model("Booking", bookingSchema);
-
-
-  now controllers folder
-  users.js
-
-  import userModel from '../models/users.js'
-import bcrypt from 'bcrypt';
-import Booking from '../models/Bookings.js';
-import jwt from 'jsonwebtoken';
-
-
-export const getAllUsers = async (req,res)=>{
-    try {
-        let users;
-        users = await userModel.find()
-        if(!users){
-            res.status(500).send({  message:"Internal Server Error now",
-            error:error.message})
-        }
-        else{
-            res.status(200).send({users})
-        }
-    } catch (error) {
-        console.log(error)
-    }
-}
-const saltRounds=10;
-export const signUp = async (req, res, next) => {
-  const { name, email, password } = req.body;
-
-  if (!name || !email || !password) {
-    return res.status(422).json({ message: "Invalid data" });
-  }
-
-  try {
-    const hashedPassword = bcrypt.hashSync(password, saltRounds);
-    const user = await userModel.create({ name, email, password: hashedPassword });
-
-    if (!user) {
-      return res.status(500).json({ message: "Unexpected Error Occurred" });
-    }
-
-    return res.status(201).json({
-      id: user._id,
-      email: user.email,
-      // Add other user details you want to send to the frontend
-    });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-export const loginUser = async (req, res, next) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(422).json({ message: "Invalid Inputs" });
-  }
-
-  try {
-    const existingUser = await userModel.findOne({ email });
-
-    if (!existingUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const isPasswordCorrect = bcrypt.compareSync(password, existingUser.password);
-
-    if (!isPasswordCorrect) {
-      return res.status(400).json({ message: "Incorrect Password" });
-    }
-  
-    // Generate a JWT token
-    const token = jwt.sign({ id: existingUser._id, email: existingUser.email }, 'your_secret_key', {
-      expiresIn: '1h', // Token expiration time
-    });
-  
-    // Send the token as part of the response
-    return res.status(200).json({
-      token,
-      id: existingUser._id,
-      email: existingUser.email,
-    });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-
-export const updateUser = async (req, res) => {
-    const id = req.params.id;
-    const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-        res.status(422).send({ message: "Invalid data" });
-    } else {
-        try {
-            // Hash the password
-            const hashedPassword = await bcrypt.hash(password, 10);
-
-            // Find the user by ID and update the details
-            const user = await userModel.findByIdAndUpdate(id, { name, email, password: hashedPassword }, { new: true });
-
-            if (!user) {
-                res.status(404).json({ message: "User not found" });
-            } else {
-                res.status(200).json({message: "updated sucessfully"});
-            }
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: "Internal Server Error" });
-        }
-    }
-};
-export const deleteUserById = async (req, res) => {
-    const id = req.params.id;
-
-    try {
-        const deletedUser = await userModel.findByIdAndDelete(id);
-
-        if (!deletedUser) {
-            res.status(404).json({ message: "User not found" });
-        } else {
-            res.status(200).json({ message: "User deleted successfully" });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Internal Server Error" });
-    }
-};
-
-export const getBookingsOfUser = async (req, res) => {
-    const id = req.params.id;
-    let bookings;
-    try {
-      bookings = await Booking.find({ user: id }).populate("movie");
-      
-      if (!bookings || bookings.length === 0) {
-        return res.status(404).json({ message: "No bookings found for this user" });
-      }
-      
-      return res.status(200).json({ bookings });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: "Failed to fetch bookings" });
-    }
+      .then((res) => {
+        // Show ticket confirmation after successful booking
+        console.log('Ticket booked:', res); // Replace this with your confirmation display logic
+      })
+      .catch((err) => console.log(err));
   };
-  
-  export const getUserById = async (req, res) => {
-    const id = req.params.id;
-  
-    try {
-      const user = await userModel.findById(id);
-      
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-      
-      return res.status(200).json({ user });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: "Failed to fetch user" });
-    }
-}
-
-export const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({ message: 'Access denied. Token missing.' });
-  }
-
-  try {
-    const decoded = jwt.verify(token, 'your_secret_key');
-    req.user = decoded; // Attach user details to the request object
-    next();
-  } catch (err) {
-    res.status(403).json({ message: 'Invalid token' });
-  }
+  return (
+    <div>
+      {movie && (
+        <>
+          <Typography padding={3} fontFamily="fantasy" variant="h4" textAlign="center" color="secondary">
+            Book Tickets For {movie.title}
+          </Typography>
+          <Box display="flex" justifyContent="center" gap={3}>
+            <Box width="30%">
+              <img
+                width="100%"
+                height="auto"
+                src={movie.posterUrl}
+                alt={movie.title}
+                style={{ borderRadius: '10px', height: '80%' }}
+              />
+            </Box>
+            <Box width="70%">
+              <Typography variant="body1" gutterBottom style={{ marginBottom: '30px' }}>
+                <b>{movie.description}</b>
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                <b>Starrer:</b> {movie.actors.join(', ')}
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                <b>Release Date:</b> {new Date(movie.releaseDate).toDateString()}
+              </Typography>
+              <Paper elevation={3} style={{ marginTop: '30px', padding: '20px' }}>
+                <Grid container justifyContent="center">
+                  {Array.from({ length: 100 }, (_, index) => index + 1).map((seat) => (
+                    <Grid item key={seat}>
+                      <Button
+                        variant="contained"
+                        style={{
+                          margin: '5px',
+                          backgroundColor: selectedSeats.includes(seat) ? '#FF6F61' : '#FFE066',
+                        }}
+                        onClick={() => handleSeatSelection(seat)}
+                      >
+                        <Box display="flex" flexDirection="column" alignItems="center">
+                          {selectedSeats.includes(seat) ? <EventAvailable /> : <EventSeat />}
+                          <Typography variant="caption" fontWeight="bold">
+                            {seat}
+                          </Typography>
+                        </Box>
+                      </Button>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Paper>
+              <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
+                <Box padding={5} margin="auto" display="flex" flexDirection="column">
+                  <Box marginBottom={2}>
+                    <FormLabel>Date</FormLabel>
+                    <input
+                      name="date"
+                      type="date"
+                      value={inputs.date}
+                      onChange={handleChange}
+                    />
+                  </Box>
+                  <Button type="submit" variant="contained" color="primary">
+                    Book Now
+                  </Button>
+                </Box>
+              </form>
+            </Box>
+          </Box>
+        </>
+      )}
+    </div>
+  );
 };
 
-
-movie.js
-import Movie from '../models/Movie.js';
-
-// Function to get all movies
-export const getAllMovies = async (req, res) => {
-  try {
-    const movies = await Movie.find();
-    res.status(200).json({ movies });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to fetch movies' });
-  }
-};
-
-// Function to get movie by ID
-export const getMovieById = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const movie = await Movie.findById(id);
-    if (!movie) {
-      return res.status(404).json({ message: 'Movie not found' });
-    }
-    res.status(200).json({ movie });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to fetch the movie' });
-  }
-};
-
-export const addMovie = async (req, res) => {
-  const movieData = req.body;
-
-  try {
-    const existingMovie = await Movie.findOne({ title: movieData.title });
-
-    if (existingMovie) {
-      return res.status(400).json({ message: 'Movie already exists' });
-    }
-
-    const newMovie = new Movie(movieData);
-    await newMovie.save();
-    res.status(201).json({ message: 'Movie added successfully', movie: newMovie });
-  } catch (error) {
-    console.error('Failed to add movie:', error);
-    res.status(500).json({ message: 'Failed to add movie' });
-  }
-};
-
-// Delete a movie by ID
-export const deleteMovieById = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const movie = await Movie.findById(id);
-
-    if (!movie) {
-      return res.status(404).json({ message: 'Movie not found' });
-    }
-
-    await Movie.findByIdAndDelete(id);
-    res.status(200).json({ message: 'Movie deleted successfully' });
-  } catch (error) {
-    console.error('Failed to delete movie:', error);
-    res.status(500).json({ message: 'Failed to delete movie' });
-  }
-}
-export const addMultipleMovies = async (req, res) => {
-  try {
-    const moviesData = req.body?.movies || []; // Safely access req.body.movies or default to an empty array
-
-    if (!Array.isArray(moviesData) || moviesData.length === 0) {
-      return res.status(400).json({ message: 'No valid movies data provided' });
-    }
-
-    const existingTitles = (await Movie.find({ title: { $in: moviesData.map(movie => movie.title) } }))
-      .map(movie => movie.title);
-
-    const newMovies = moviesData.filter(movie => !existingTitles.includes(movie.title));
-
-    if (newMovies.length === 0) {
-      return res.status(400).json({ message: 'All movies already exist' });
-    }
-
-    await Movie.insertMany(newMovies);
-    res.status(201).json({ message: 'Movies added successfully', movies: newMovies });
-  } catch (error) {
-    console.error('Failed to add movies:', error);
-    res.status(500).json({ message: 'Failed to add movies' });
-  }
-};
-
-bookings.js
-import mongoose from "../models/index.js";
-import Booking from "../models/Bookings.js";
-import Movie from "../models/Movie.js";
-import User from "../models/users.js";
-
-export const newBooking = async (req, res) => {
-  const { movie,user, seatNumber,date  } = req.body;
-
-  let existingMovie;
-  let existingUser;
-  let session;
-
-  try {
-    existingMovie = await Movie.findById(movie);
-    existingUser = await User.findById(user);
-
-    if (!existingMovie) {
-      
-      console.log(existingMovie);
-      
-      return res.status(404).json({ message: "Movie Not Found With Given ID" });
-    }
-
-    if (!existingUser) {
-      console.log(existingUser);
-      return res.status(404).json({ message: "User not found with given ID" });
-    }
-
-    session = await mongoose.startSession();
-    session.startTransaction();
-
-    const booking = new Booking({
-      movie,
-      date: new Date(`${date}`),
-      seatNumber,
-      user,
-    });
-    if (!existingUser || !existingMovie) {
-      return res.status(404).json({ message: "User or movie not found" });
-    }
-    existingUser.bookings.push(booking);
-    existingMovie.bookings.push(booking);
-
-    await existingUser.save({ session });
-    await existingMovie.save({ session });
-    await booking.save({ session });
-
-    await session.commitTransaction();
-    session.endSession();
-
-    return res.status(201).json({ booking });
-  } catch (err) {
-    console.error(err);
-    if (session) {
-      await session.abortTransaction();
-      session.endSession();
-    }
-    return res.status(500).json({ message: "Unable to create a booking" });
-  }
-};
-
-export const getBookingById = async (req, res) => {
-  const id = req.params.id;
-
-  try {
-    const booking = await Booking.findById(id);
-    if (!booking) {
-      return res.status(404).json({ message: "Booking Not Found" });
-    }
-    return res.status(200).json({ booking });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Unexpected Error" });
-  }
-};
-
-export const deleteBooking = async (req, res) => {
-  const id = req.params.id;
-  
-  let session; // Define session variable outside the try block
-  
-  try {
-    const booking = await Booking.findOneAndDelete({ _id: id }).populate("user movie");
-    if (!booking) {
-      return res.status(404).json({ message: "Booking Not Found" });
-    }
-
-    session = await mongoose.startSession();
-    session.startTransaction();
-
-    await booking.user.bookings.pull(booking);
-    await booking.movie.bookings.pull(booking);
-
-    await booking.movie.save({ session });
-    await booking.user.save({ session });
-
-    await session.commitTransaction();
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Unable to Delete" });
-  } finally {
-    if (session) { // Check if session is defined before ending it
-      session.endSession();
-    }
-  }
-
-  return res.status(200).json({ message: "Successfully Deleted" });
-};
-
+export default Booking;

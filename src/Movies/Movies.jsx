@@ -4,7 +4,7 @@ import { getAllMovies } from "../api/ApiService";
 import MovieDetail from "./MovieDetail";
 
 const Movies = () => {
-  const [movies, setMovies] = useState();
+  const [movies, setMovies] = useState([]);
 
   useEffect(() => {
     getAllMovies()

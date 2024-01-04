@@ -30,32 +30,34 @@ export default function SignUp() {
       email: formData.get('email'),
       password: formData.get('password'),
     };
-
     try {
       const endpoint = isSignup ? '/user/signup' : '/user/login';
       const response = await axios.post(`http://localhost:8000${endpoint}`, userData);
-
+    
       if (response.status === 200 || response.status === 201) {
         console.log(isSignup ? 'Signup successful!' : 'Login successful!');
-
-        // Check if the response contains a token
-        const { token } = response.data;
-
+    
+        const { token, id } = response.data; // Assuming the user ID is returned as 'id'
+    
         if (token) {
-          console.log('Token received:', token); // Log the token
+          console.log('Token received:', token);
           localStorage.setItem('token', token); // Store the token in local storage
-          setIsAuthenticated(true); // Set authentication state to true
         }
-
-        navigate('/'); 
-        window.location.reload()// Redirect to the main page after successful login/signup
+    
+        if (id) {
+          console.log('User ID received:', id);
+          localStorage.setItem('userId', id); // Store the user ID in local storage
+        }
+    
+        setIsAuthenticated(true);
+        navigate('/');
+        window.location.reload();
       } else {
         console.log(isSignup ? 'Signup failed!' : 'Login failed!');
       }
     } catch (error) {
       console.error(error);
     }
-  
   };
   
   return (
