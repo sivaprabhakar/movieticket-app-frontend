@@ -32,7 +32,7 @@ export default function SignUp() {
     };
     try {
       const endpoint = isSignup ? '/user/signup' : '/user/login';
-      const response = await axios.post(`https://movieticket-booking.onrender.com ${endpoint}`, userData);
+      const response = await axios.post(`https://movieticket-booking.onrender.com${endpoint}`, userData);
     
       if (response.status === 200 || response.status === 201) {
         console.log(isSignup ? 'Signup successful!' : 'Login successful!');
