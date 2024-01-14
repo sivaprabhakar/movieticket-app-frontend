@@ -58,6 +58,7 @@ const Booking = () => {
     }
 
     try {
+      console.log("Selected Seats:", selectedSeats);
       const res = await newBooking({
         userId: userId,
         movie: movie._id,
