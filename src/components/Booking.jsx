@@ -21,7 +21,7 @@ const Booking = () => {
       })
       .catch((err) => console.log(err));
   }, [id]);
-
+   
   const handleChange = (e) => {
     setInputs((prevState) => ({
       ...prevState,
@@ -82,7 +82,7 @@ const Booking = () => {
   };
 
   return (
-    <div>
+    <div style={{ background: "#0f0d10", minHeight: "100vh", color: "#fff" }}>
       {movie && (
         <>
           <Typography padding={3} fontFamily="fantasy" variant="h4" textAlign="center" color="secondary">
@@ -108,7 +108,7 @@ const Booking = () => {
               <Typography variant="body2" gutterBottom>
                 <b>Release Date:</b> {new Date(movie.releaseDate).toDateString()}
               </Typography>
-              <Paper elevation={3} style={{ marginTop: '30px', padding: '20px' }}>
+              <Paper elevation={3} style={{ marginTop: '30px', padding: '20px', background: "#1e272e", borderRadius: "10px" }}>
                 <Grid container justifyContent="center">
                   {Array.from({ length: 100 }, (_, index) => index + 1).map((seat) => (
                     <Grid item key={seat}>
@@ -134,7 +134,7 @@ const Booking = () => {
               <form onSubmit={handleSubmit} style={{ marginTop: '20px' }}>
                 <Box padding={5} margin="auto" display="flex" flexDirection="column">
                   <Box marginBottom={2}>
-                    <FormLabel>Date</FormLabel>
+                    <FormLabel style={{ color: "white" }}>Date</FormLabel>
                     <input
                       name="date"
                       type="date"
@@ -142,8 +142,23 @@ const Booking = () => {
                       onChange={handleChange}
                     />
                   </Box>
-                  <Button type="submit" variant="contained" color="primary">
-                    Book Now
+                  <Button
+                    type="submit"
+                    sx={{
+                      margin: "auto",
+                      color: "#fff",  
+                      background: "#e11c15",  
+                     
+                      borderRadius: "8px",
+                      padding: "10px 20px",
+                      textDecoration: "none",
+                      "&:hover": {
+                        background: "#e11c15",  // Hover background color
+                        color: "#fff",  
+                      },
+                    }}
+                  >
+                    Book now
                   </Button>
                 </Box>
               </form>
@@ -152,21 +167,37 @@ const Booking = () => {
         </>
       )}
       {confirmation.show && (
-       <div className="confirmation-overlay">
-       <div className="confirmation-popup">
-       <Typography variant="h5" marginBottom="20px">
+  <div className="confirmation-overlay" style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+    <div className="confirmation-popup" style={{ background: "#0f0d10", borderRadius: "10px", color: "#fff", padding: "20px", maxWidth: "400px", textAlign: "center" }}>
+      <Typography variant="h5" marginBottom="20px">
         Ticket Booked Successfully
       </Typography>
       <Typography variant="body1" marginBottom="10px">
         Movie: {movie?.title}
       </Typography>
-         <Typography variant="body1" marginBottom="10px">Seats: {confirmation.seatNumbers.join(', ')}</Typography>
-         <Typography variant="body1" >Date: {new Date(confirmation.date).toDateString()}</Typography>
-         <Button variant="contained" color="primary" onClick={closeConfirmation}>
-           Close
-         </Button>
-       </div>
-     </div>
+      <Typography variant="body1" marginBottom="10px">Seats: {confirmation.seatNumbers.join(', ')}</Typography>
+      <Typography variant="body1" >Date: {new Date(confirmation.date).toDateString()}</Typography>
+      <Button
+        sx={{
+          margin: "auto",
+          color: "#fff",
+          background: "linear-gradient(to right, #001F3F, #003366)",  // Dark blue linear gradient background
+          border: "2px solid #001F3F",
+          borderRadius: "8px",
+          padding: "10px 20px",
+          textDecoration: "none",
+          "&:hover": {
+            background: "linear-gradient(to right, #003366, #004080)",  // Hover dark blue linear gradient background
+            color: "#fff",
+          },
+        }}
+        onClick={closeConfirmation}
+      >
+        Close
+      </Button>
+    </div>
+  </div>
+
       )}
     </div>
   );

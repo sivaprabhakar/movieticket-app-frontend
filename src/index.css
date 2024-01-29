@@ -51,15 +51,7 @@
     object-fit: cover;
   }
   
-  .carousel-container .carousel-caption {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-  }
+  
   .d-block {
     width:100% !important;
 
