@@ -1,5 +1,7 @@
 this fronend tech is used react js ,MUI,redux for booking ticket for movie # React + Vite
 
+how to use first signup in app after sigup again change to signin signin to book tickets 
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
