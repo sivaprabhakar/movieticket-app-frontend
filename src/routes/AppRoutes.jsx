@@ -2,7 +2,7 @@ import React from 'react'
 import {Routes,Route } from 'react-router-dom'
 import SignUp from '../components/SignUp'
 import Home from '../components/Home'
-import User from '../components/User'
+
 import Movies from '../Movies/Movies'
 import UserProfile from '../components/UserProfile'
 import { useEffect } from "react";
@@ -23,7 +23,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/movies" element={<Movies />} />
-      <Route path="/user" element={<User />} />
+    
       <Route path="/signup" element={<SignUp />} />
       <Route path="/userprofile"   element={<UserProfile />} />
       <Route path="/booking/:id"   element={<Booking />} />

@@ -18,15 +18,16 @@ function Header() {
   useEffect(() => {
     getAllMovies()
       .then((data) => setMovies(data.movies))
-      .catch((err) => console.log(err));
+      .catch((err) => console.error("Error fetching movies:", err));
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     delete axios.defaults.headers.common['Authorization'];
-    dispatch(userActions.logout()); 
+    dispatch(userActions.logout());
   };
+
   const tabsArray = [
     <Tab key="movies" LinkComponent={Link} to="/movies" label="Movies" />,
     !isUserLoggedIn && (
@@ -63,16 +64,15 @@ function Header() {
               renderInput={(params) => <TextField {...params} placeholder="search" />}
             />
           </Box>
-         
           <Tabs
-    className="btns"
-    textColor="inherit"
-    indicatorColor="primary"
-    value={value}
-    onChange={(e, value) => setValue(value)}
-  >
-    {tabsArray.map((tab) => tab)}
-  </Tabs>
+            className="btns"
+            textColor="inherit"
+            indicatorColor="primary"
+            value={value}
+            onChange={(e, value) => setValue(value)}
+          >
+            {tabsArray.map((tab) => tab)}
+          </Tabs>
         </Toolbar>
       </AppBar>
     </>

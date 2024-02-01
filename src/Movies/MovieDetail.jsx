@@ -3,7 +3,6 @@ import { Button, Card, CardActions, CardContent, Typography } from "@mui/materia
 import { Link } from "react-router-dom";
 
 const MovieDetail = ({ title, releaseDate, posterUrl, id }) => {
-  console.log("Received props:", id, posterUrl, releaseDate, title);
   return (
     <Card
       sx={{
@@ -12,10 +11,10 @@ const MovieDetail = ({ title, releaseDate, posterUrl, id }) => {
         height: 320,
         borderRadius: 5,
         ":hover": {
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Adding shadow for hover effect
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         },
-        background: "rgba(255, 255, 255, 0.1)", // Adjust alpha value for transparency
-        backdropFilter: "blur(10px)", // Adding blur effect
+        background: "rgba(255, 255, 255, 0.1)",
+        backdropFilter: "blur(10px)",
         color: "white",
       }}
     >
@@ -24,7 +23,7 @@ const MovieDetail = ({ title, releaseDate, posterUrl, id }) => {
         <Typography gutterBottom variant="h5" component="div">
           {title}
         </Typography>
-        <Typography variant="body2" style={{ color: "white" }}> {/* Set text color to white */}
+        <Typography variant="body2" style={{ color: "white" }}>
           {new Date(releaseDate).toDateString()}
         </Typography>
       </CardContent>
@@ -34,14 +33,13 @@ const MovieDetail = ({ title, releaseDate, posterUrl, id }) => {
           fullWidth
           component={Link}
           to={`/booking/${id}`}
-          onClick={() => console.log("Movie ID for booking:", id)}
           sx={{
             margin: "auto",
-            background: "#e11c15", // Set the background color to #e11c15
+            background: "#e11c15",
             borderRadius: "8px",
             color: "white",
             ":hover": {
-              background: "#e11c15", // Set the hover background color to #e11c15
+              background: "#e11c15",
             },
           }}
           size="small"

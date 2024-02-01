@@ -8,11 +8,23 @@ import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Slide from "@mui/material/Slide";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const UserProfile = () => {
   const [userProfile, setUserProfile] = useState(null);
   const [selectedBooking, setSelectedBooking] = useState(null);
-  const userId = localStorage.getItem('userId');
+  const [confirmationMessage, setConfirmationMessage] = useState("");
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -35,15 +47,38 @@ const UserProfile = () => {
       // Refresh user profile after canceling the booking
       const updatedProfile = await getUserProfile(userId);
       setUserProfile(updatedProfile);
+      setConfirmationMessage("Booking canceled successfully.");
+      setTimeout(() => setConfirmationMessage(""), 3000); // Clear the message after 3 seconds
     }
   };
 
-  const handleCardClick = (booking) => {
-    if (selectedBooking === booking) {
-      setSelectedBooking(null);
-    } else {
-      setSelectedBooking(booking);
-    }
+  const showConfirmationDialog = (bookingId) => {
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <Dialog open={true} TransitionComponent={Transition} onClose={onClose}>
+            <DialogTitle>Confirm to Cancel</DialogTitle>
+            <DialogContent>
+              <Typography variant="body1">Are you sure you want to cancel this booking?</Typography>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => {
+                  handleCancelBooking(bookingId);
+                  onClose();
+                }}
+                style={{ marginTop: "10px", background: "#e11c15", borderRadius: "8px" }}
+              >
+                Yes
+              </Button>
+              <Button onClick={onClose} style={{ marginTop: "10px", marginLeft: "10px" }}>
+                No
+              </Button>
+            </DialogContent>
+          </Dialog>
+        );
+      },
+    });
   };
 
   return (
@@ -68,14 +103,21 @@ const UserProfile = () => {
                   Bookings
                 </Typography>
                 {userProfile.bookings.length === 0 ? (
-                  <Typography>No bookings found.</Typography>
+                  <Typography style={{ color: "#fff" }}>No bookings found.</Typography>
                 ) : (
                   userProfile.bookings.map((booking) => (
                     <Card
                       key={booking._id}
-                      onClick={() => handleCardClick(booking)}
+                      onClick={() => setSelectedBooking(booking)}
                       elevation={selectedBooking === booking ? 5 : 1}
-                      style={{ marginBottom: "20px", cursor: "pointer", backgroundColor: selectedBooking === booking ? "#f5f5f5" : "#fff", borderRadius: "8px" }}
+                      style={{
+                        marginBottom: "20px",
+                        cursor: "pointer",
+                        borderRadius: "8px",
+                        overflow: "hidden",
+                        position: "relative",
+                        background: selectedBooking === booking ? "#f5f5f5" : "#fff",
+                      }}
                     >
                       <CardContent>
                         <Typography variant="subtitle1" style={{ fontWeight: "bold" }}>
@@ -92,7 +134,7 @@ const UserProfile = () => {
                           color="secondary"
                           onClick={(e) => {
                             e.stopPropagation(); // Prevent card click when cancel button is clicked
-                            handleCancelBooking(booking._id);
+                            showConfirmationDialog(booking._id);
                           }}
                           style={{ marginTop: "10px", background: "#e11c15", borderRadius: "8px" }}
                         >
@@ -103,6 +145,11 @@ const UserProfile = () => {
                   ))
                 )}
               </Paper>
+              {confirmationMessage && (
+                <Paper style={{ padding: "10px", marginTop: "20px", background: "#28a745", borderRadius: "5px" }}>
+                  <Typography variant="body2">{confirmationMessage}</Typography>
+                </Paper>
+              )}
             </Grid>
           </Grid>
         </>

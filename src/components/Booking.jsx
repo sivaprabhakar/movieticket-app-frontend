@@ -4,24 +4,32 @@ import { getMovieDetails, newBooking } from '../api/ApiService';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { FormLabel, Grid, Paper } from '@mui/material';
+import { FormLabel, Grid, Paper, CircularProgress } from '@mui/material';
 import { EventSeat, EventAvailable } from '@mui/icons-material';
 
 const Booking = () => {
+  const { id } = useParams();
   const [movie, setMovie] = useState(null);
   const [inputs, setInputs] = useState({ date: '' });
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [confirmation, setConfirmation] = useState({ movie: '', seatNumbers: [], date: '', show: false });
-  const { id } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    setLoading(true);
     getMovieDetails(id)
       .then((res) => {
         setMovie(res.movie);
+        setLoading(false);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.error("Error fetching movie details:", err);
+        setError("Error fetching movie details. Please try again later.");
+        setLoading(false);
+      });
   }, [id]);
-   
+
   const handleChange = (e) => {
     setInputs((prevState) => ({
       ...prevState,
@@ -50,15 +58,15 @@ const Booking = () => {
       return;
     }
 
-    const userId = localStorage.getItem('userId'); // Get userId from localStorage
+    const userId = localStorage.getItem('userId');
 
     if (!userId) {
-      console.error('User ID not available');
+      alert('Please log in to book tickets.');
       return;
     }
 
     try {
-      console.log("Selected Seats:", selectedSeats);
+      setLoading(true);
       const res = await newBooking({
         userId: userId,
         movie: movie._id,
@@ -74,6 +82,9 @@ const Booking = () => {
       }
     } catch (error) {
       console.error('Error while booking:', error);
+      setError('Error while booking. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -82,13 +93,30 @@ const Booking = () => {
   };
 
   return (
-    <div style={{ background: "#0f0d10", minHeight: "100vh", color: "#fff" }}>
-      {movie && (
+    <div style={{ background: "#0f0d10", minHeight: "100vh", color: "#fff", padding: '20px' }}>
+      {loading && (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="100vh"
+          position="fixed"
+          top={0}
+          left={0}
+          width="100%"
+          background="rgba(0, 0, 0, 0.7)"
+          zIndex={999}
+        >
+          <CircularProgress color="secondary" />
+        </Box>
+      )}
+      {error && <Typography variant="h4" color="error">{error}</Typography>}
+      {!loading && !error && movie && (
         <>
-          <Typography padding={3} fontFamily="fantasy" variant="h4" textAlign="center" color="secondary">
+          <Typography variant="h4" fontFamily="fantasy" textAlign="center" color="secondary">
             Book Tickets For {movie.title}
           </Typography>
-          <Box display="flex" justifyContent="center" gap={3}>
+          <Box display="flex" justifyContent="center" gap={3} marginTop={4}>
             <Box width="30%">
               <img
                 width="100%"
@@ -140,6 +168,7 @@ const Booking = () => {
                       type="date"
                       value={inputs.date}
                       onChange={handleChange}
+                      min={new Date().toISOString().split('T')[0]} // Disable past dates
                     />
                   </Box>
                   <Button
@@ -148,17 +177,17 @@ const Booking = () => {
                       margin: "auto",
                       color: "#fff",  
                       background: "#e11c15",  
-                     
                       borderRadius: "8px",
                       padding: "10px 20px",
                       textDecoration: "none",
                       "&:hover": {
-                        background: "#e11c15",  // Hover background color
+                        background: "#e11c15",
                         color: "#fff",  
                       },
                     }}
+                   
                   >
-                    Book now
+                    {loading ? 'Booking...' : 'Book now'}
                   </Button>
                 </Box>
               </form>
@@ -167,37 +196,36 @@ const Booking = () => {
         </>
       )}
       {confirmation.show && (
-  <div className="confirmation-overlay" style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-    <div className="confirmation-popup" style={{ background: "#0f0d10", borderRadius: "10px", color: "#fff", padding: "20px", maxWidth: "400px", textAlign: "center" }}>
-      <Typography variant="h5" marginBottom="20px">
-        Ticket Booked Successfully
-      </Typography>
-      <Typography variant="body1" marginBottom="10px">
-        Movie: {movie?.title}
-      </Typography>
-      <Typography variant="body1" marginBottom="10px">Seats: {confirmation.seatNumbers.join(', ')}</Typography>
-      <Typography variant="body1" >Date: {new Date(confirmation.date).toDateString()}</Typography>
-      <Button
-        sx={{
-          margin: "auto",
-          color: "#fff",
-          background: "linear-gradient(to right, #001F3F, #003366)",  // Dark blue linear gradient background
-          border: "2px solid #001F3F",
-          borderRadius: "8px",
-          padding: "10px 20px",
-          textDecoration: "none",
-          "&:hover": {
-            background: "linear-gradient(to right, #003366, #004080)",  // Hover dark blue linear gradient background
-            color: "#fff",
-          },
-        }}
-        onClick={closeConfirmation}
-      >
-        Close
-      </Button>
-    </div>
-  </div>
-
+        <div className="confirmation-overlay" style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <div className="confirmation-popup" style={{ background: "#fff", borderRadius: "10px", color: "#000", padding: "20px", maxWidth: "400px", textAlign: "center" }}>
+            <Typography variant="h5" marginBottom="20px">
+              Ticket Booked Successfully
+            </Typography>
+            <Typography variant="body1" marginBottom="10px">
+              Movie: {movie?.title}
+            </Typography>
+            <Typography variant="body1" marginBottom="10px">Seats: {confirmation.seatNumbers.join(', ')}</Typography>
+            <Typography variant="body1" >Date: {new Date(confirmation.date).toDateString()}</Typography>
+            <Button
+              sx={{
+                margin: "auto",
+                color: "#fff",
+                background: "linear-gradient(to right, #001F3F, #003366)",
+                border: "2px solid #001F3F",
+                borderRadius: "8px",
+                padding: "10px 20px",
+                textDecoration: "none",
+                "&:hover": {
+                  background: "linear-gradient(to right, #003366, #004080)",
+                  color: "#fff",
+                },
+              }}
+              onClick={closeConfirmation}
+            >
+              Close
+            </Button>
+          </div>
+        </div>
       )}
     </div>
   );
